@@ -286,13 +286,13 @@ class NeptuneAnalyticsAdapter(NeptuneGraphDB, VectorDBInterface):
             embedding = data_vectors[0]
 
         # Compose the parameters map
-        params = dict(embedding=embedding, param_topk=limit)
+        params = dict(embedding=embedding, param_topk=limit, collection_name=collection_name)
         # Compose the query
         query_string = f"""
         CALL neptune.algo.vectors.topKByEmbeddingWithFiltering({{
-                topK: {limit},
-                embedding: {embedding},
-                nodeFilter: {{ equals: {{property: '{self._COLLECTION_PREFIX}', value: '{collection_name}'}} }}
+                topK: $param_topk,
+                embedding: $embedding,
+                nodeFilter: {{ equals: {{property: '{self._COLLECTION_PREFIX}', value: $collection_name}} }}
               }}
             )
         YIELD node, score
